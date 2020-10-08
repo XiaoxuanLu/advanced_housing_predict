@@ -20,10 +20,23 @@ Root
  |
  +-- src/
  |  |
- |  +-- utils.py
+ |  +-- modelling.py
  |  +-- preparing_datasets.py
- |  |-- datasets/
+ |  |-- data/
  |    |
- |    +-- AmesHousing.txt
+ |    +-- housing-data.txt
  |    +-- data_description.txt
 #+end_example
+
+* Assignment
+The purpose of this assignment is to put some of the theories we have discussed
+during the past few lectures into practice, by applying regularisation
+algorithms, implementing early stopping, and interpreting learning curves of our
+trained models.
+
+The data set used for this assignment contains many more columns than the data
+we have used before, and not all of these can directly be used by a model. To be
+able to use all columns, we will have to develop a few functions to transform
+all data into usable types. The resulting object will have to be usable using
+similar methods as a scikit-learn /estimator/, and will be evaluated against a
+hold-out set.
