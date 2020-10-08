@@ -1,0 +1,29 @@
+* Introduction
+This repository contains the start of the second machine learning assignment, in
+which you will train a predictor to predict sale prices for houses in Ames,
+Iowa during 2006-2010. This assignment will cover a few subjects:
+
+- Regularisation
+- Hyper-parameter tuning
+- Early stopping
+- Interpreting learning curves.
+
+* Repository Contents
+#+begin_example
+Root
+ |
+ +-- README.org
+ |
+ +-- img/
+ |  |
+ |  +--
+ |
+ +-- src/
+ |  |
+ |  +-- utils.py
+ |  +-- preparing_datasets.py
+ |  |-- datasets/
+ |    |
+ |    +-- AmesHousing.txt
+ |    +-- data_description.txt
+#+end_example
