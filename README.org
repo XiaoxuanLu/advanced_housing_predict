@@ -40,3 +40,26 @@ able to use all columns, we will have to develop a few functions to transform
 all data into usable types. The resulting object will have to be usable using
 similar methods as a scikit-learn /estimator/, and will be evaluated against a
 hold-out set.
+
+** Requirements
+You are expected to implement the following:
+- A model using L1 regularisation
+- A model using L2 regularisation
+- A model using a combination of L1 and L2 regularisation
+- For each algorithm, a grid of hyper-parameters to use in hyper-parameter
+  tuning
+- For each algorithm , plot the learning curve of your 'best model', the
+  combination of hyper parameters which performed best.
+
+Your final model should be easily importable from your repository as
+=chosen_model=, which will then be used to evaluate your model on a final hold
+out set of data.
+
+Finally, you are expected to write a report narrating your work. For each model,
+explain why you selected the parameters you used in your hyper-parameter
+optimisation. Describe how these models relate to each other, and if there are
+differences in the results between the your models, try to explain why. Lastly,
+write about your observations in working on the assignment. What went well, what
+was easier to do than expected, and what did you spent most of your time on?
+You can write this report by continuing this file, or in another file you
+include in the repository.
