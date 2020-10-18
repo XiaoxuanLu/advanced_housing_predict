@@ -1,0 +1,8 @@
+#!/Users/sherry/Desktop/2020 Fall/machine learning/advanced-housing/venv/bin/python
+"""
+This is pmg command in bin directory, runs pmg.py module in pymodel directory
+"""
+
+import pmg  # find pmg.py anywhere on Python path
+
+pmg.main()

@@ -1,0 +1,8 @@
+#!/Users/sherry/Desktop/2020 Fall/machine learning/advanced-housing/venv/bin/python
+"""
+This is wsgirunner command in bin directory, runs wsgirunner.py module in pymodel directory
+"""
+
+import wsgirunner  # find wsgirunner.py anywhere on Python path
+
+wsgirunner.main()

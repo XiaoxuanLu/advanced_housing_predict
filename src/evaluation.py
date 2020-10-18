@@ -1,9 +1,11 @@
-from modelling import chosen_model
+from sklearn.metrics import mean_absolute_error, r2_score, mean_squared_error
+from src.modelling import chosen_model
 from pathlib import Path
 import pandas as pd
+
 data_dir = Path("data/")
 all_data = pd.read_csv(data_dir / "housing-data.csv", index_col="Order")
-test_data = pd.read_csv(data_dir / "hold-out.csv", index_col="Order")
+test_data = pd.read_csv(data_dir / "housing-data.csv", index_col="Order")
 
 
 def evaluate_model(
