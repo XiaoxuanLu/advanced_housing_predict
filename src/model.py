@@ -69,15 +69,14 @@ mae = mae_cal(lasso)
 print(f"MAE estimate for lasso alpha with 0.1: {mae}")
 
 # calculate RMSE over several alphas
-lom = []
-alphas = [0.05, 0.1, 0.3, 1, 3, 5, 10, 15, 30, 50, 75]
-cv_lasso = [mae_cal(Lasso(alpha = alpha)).mean() for alpha in alphas]
-cv_lasso = pd.Series(cv_lasso, index = alphas)
+alphas = np.array([0.0004, 0.05, 0.1, 0.3, 1, 3, 5, 10, 10.6, 15, 20])
+model = Lasso()
+grid = GridSearchCV(estimator=model, param_grid=dict(alpha=alphas))
+grid.fit(X_train, y_train)
+alpha = grid.best_estimator_.alpha
+print(alpha)
 
-optimalLassoAlpha = cv_lasso[cv_lasso == cv_lasso.min()].index.values[0]
-print("Optimal lasso alpha: {}".format(optimalLassoAlpha))
-
-lasso_model = Lasso(optimalLassoAlpha)
+lasso_model = Lasso(alpha)
 mae = mae_cal(lasso_model)
 print(f"MAE for lasso regression with optimal alpha is {mae}")
 
@@ -91,17 +90,19 @@ print(f"MAE estimate for ridge alpha with 0.1: {mae}")
 
 
 # calculate MAE over several alphas
-alphas = [0.05, 0.1, 0.3, 1, 3, 5, 10, 10.6, 15, 15.2, 30, 50, 75]
-cv_ridge = [mae_cal(Ridge(alpha = alpha)).mean() for alpha in alphas]
-cv_ridge = pd.Series(cv_ridge, index = alphas)
+alphas = np.array([0.05, 0.1, 0.3, 1, 3, 5, 10, 10.6, 15, 20])
+model = Ridge()
+grid = GridSearchCV(estimator=model, param_grid=dict(alpha=alphas))
+grid.fit(X_train, y_train)
+alpha = grid.best_estimator_.alpha
+print(alpha)
 
-optimalRidgeAlpha = cv_ridge[cv_ridge == cv_ridge.min()].index.values[0]
-print("Optimal ridge alpha: {}".format(optimalRidgeAlpha))
-
-# determine MAE for ridge regression model with optimal alpha
-ridge_model = Ridge(optimalRidgeAlpha)
+ridge_model = Ridge(alpha)
 mae = mae_cal(ridge_model)
-print(f"MAE for ridge regression with optimal alpha is {mae}")
+print(f"MAE estimate for ridge alpha with optimal alpha: {mae}")
+
+
+
 
 
 # L1&2 regularization with ElasticNet
@@ -111,15 +112,16 @@ mae = mae_cal(elastic)
 print(f"MAE estimate for ElasticNet alpha with 0.1: {mae}")
 
 # calculate MAE over several alphas
-alphas = [0.05, 0.1, 0.3, 1, 3, 5, 10, 10.6, 15, 15.2, 30, 50, 75]
-cv_elastic = [mae_cal(ElasticNet(alpha=alpha)).mean() for alpha in alphas]
-cv_elastic = pd.Series(cv_elastic, index=alphas)
+alphas = np.array([0.0001, 0.004, 0.05, 0.1, 0.3, 1, 3, 5, 10, 10.6, 15, 20, 30, 40, 75])
+model = ElasticNet()
+grid = GridSearchCV(estimator=model, param_grid=dict(alpha=alphas))
+grid.fit(X_train, y_train)
+alpha = grid.best_estimator_.alpha
+print(alpha)
 
-optimalelaAlpha = cv_elastic[cv_elastic == cv_elastic.min()].index.values[0]
-print("Optimal ElasticNet alpha: {}".format(optimalelaAlpha))
 
 # determine MAE for ElasticNet model with optimal alpha
-elastic_model = ElasticNet(optimalelaAlpha)
+elastic_model = ElasticNet(alpha)
 mae = mae_cal(elastic_model)
 print(f"MAE for ElasticNet with optimal alpha is {mae}")
 
