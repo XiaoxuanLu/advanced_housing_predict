@@ -1,5 +1,6 @@
 from pathlib import Path
 import matplotlib.pyplot as plt
+from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LinearRegression
@@ -8,9 +9,12 @@ from sklearn.pipeline import Pipeline
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 from sklearn.linear_model import Ridge
 from sklearn.linear_model import Lasso
-from sklearn.model_selection import cross_val_score, train_test_split, GridSearchCV
+from sklearn.model_selection import cross_val_score, train_test_split, GridSearchCV, KFold
 from sklearn.linear_model import ElasticNet
 from sklearn.compose import ColumnTransformer
+from sklearn.linear_model import LassoCV
+from sklearn.preprocessing import RobustScaler
+
 
 data_dir = Path("data/")
 
@@ -26,7 +30,9 @@ all_data = pd.read_csv(data_dir / "housing-data.csv", index_col="Order")
 
 # replace NA's with the mean of the feature
 all_data = all_data.fillna(all_data.mean())
+
 target_column = "SalePrice"
+
 
 X_train, X_test, y_train, y_test = train_test_split(
     all_data.drop(columns=target_column), all_data[target_column]
@@ -35,65 +41,87 @@ X_train, X_test, y_train, y_test = train_test_split(
 X_train = X_train[columns_to_use]
 X_test = X_test[columns_to_use]
 
+
+
+
 imputer = SimpleImputer(
     missing_values=np.nan, strategy="constant", fill_value=0
 )
+# determine mean absolute error (MAE)
+def mae_cal(model):
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+    mae = mean_absolute_error(y_test, y_pred)
+    return mae
 
-linear_model = Pipeline([("imputer", imputer), ("model", LinearRegression())])
-# fit train and test data.
-linear_model.fit(X_train, y_train)
-# predict test data
-y_pred = linear_model.predict(X_test)
-print(f"MAE for linear regression is {mean_absolute_error(y_test, y_pred)}")
+# estimate MAE for linear regression model
+linear_model = LinearRegression()
+mae = mae_cal(linear_model)
+print(f"MAE for linear regression is {mae}")
 
 
 
 
 # L1 Regularization with lasso
-# Lasso tuning for lambda
-lasso_model = Lasso()
-# y_pred = lasso_model.predict(X_test)
-# print(f"MAE for lasso regression is {mean_absolute_error(y_test, y_pred)}")
-parameters= {'alpha':[x for x in [0.0005,0.001,0.01,0.1,1]]}
-lasso_model = GridSearchCV(lasso_model, param_grid=parameters)
-lasso_model.fit(X_train, y_train)
-print("The best value of Alpha for Lasso is: ", lasso_model.best_params_)
+# determine MAE for lasso regression model with alpha = 0.1
+lasso= Lasso(alpha=0.1)
+mae = mae_cal(lasso)
+print(f"MAE estimate for lasso alpha with 0.1: {mae}")
 
-lasso_model = Pipeline([("imputer", imputer), ("model", Lasso(0.0005))])
-lasso_model.fit(X_train, y_train)
-y_pred = lasso_model.predict(X_test)
-print(f"MAE for lasso regression is {mean_absolute_error(y_test, y_pred)}")
+# calculate RMSE over several alphas
+lom = []
+alphas = [0.05, 0.1, 0.3, 1, 3, 5, 10, 15, 30, 50, 75]
+cv_lasso = [mae_cal(Lasso(alpha = alpha)).mean() for alpha in alphas]
+cv_lasso = pd.Series(cv_lasso, index = alphas)
+
+optimalLassoAlpha = cv_lasso[cv_lasso == cv_lasso.min()].index.values[0]
+print("Optimal ridge alpha: {}".format(optimalLassoAlpha))
+
+lasso_model = Lasso(optimalLassoAlpha)
+mae = mae_cal(lasso_model)
+print(f"MAE for lasso regression with optimal alpha is {mae}")
 
 
 # L2 regularization with ridge
-ridge_model = Ridge()
-parameters= {'alpha':[x for x in [0.1,0.2,0.4,0.5,0.7,0.8,1]]}
-ridge_model=GridSearchCV(ridge_model, param_grid=parameters)
-ridge_model.fit(X_train,y_train)
-print("The best value of Alpha for Ridge is: ",ridge_model.best_params_)
 
-ridge_model = Pipeline([("imputer", imputer), ("model", Ridge(1))])
-ridge_model.fit(X_train, y_train)
-y_pred = ridge_model.predict(X_test)
-print(f"MAE for ridge regression is {mean_absolute_error(y_test, y_pred)}")
+# determine MAE for ridge regression model with alpha = 0.1
+ridge = Ridge(alpha=0.1)
+mae = mae_cal(ridge)
+print(f"MAE estimate for ridge alpha with 0.1: {mae}")
 
-# Test different alphas for ridge
-#alphas = np.logspace(start=-2, stop=2, base=10, num=30)
-#cv_ridge = [cross_validation_evaluation(Ridge(alpha=alpha)) for alpha in alphas]
-#optimised_alpha_r = alphas[cv_ridge.index(min(cv_ridge))]
-#print('Optimised alpha for ridge is: ' + str(optimised_alpha_r))
 
-# Instantiate the improved ridge regression model
-#ridge_regression_improved_model = Pipeline([("imputer", imputer), ("model", Ridge(alpha=optimised_alpha_r))])
+# calculate MAE over several alphas
+alphas = [0.05, 0.1, 0.3, 1, 3, 5, 10, 10.6, 15, 15.2, 30, 50, 75]
+cv_ridge = [mae_cal(Ridge(alpha = alpha)).mean() for alpha in alphas]
+cv_ridge = pd.Series(cv_ridge, index = alphas)
+optimalRidgeAlpha = cv_ridge[cv_ridge == cv_ridge.min()].index.values[0]
+print("Optimal ridge alpha: {}".format(optimalRidgeAlpha))
 
-#ridge_regression_improved_model.fit(X_train, y_train)
-#y_pred = ridge_regression_improved_model.predict(X_test)
-#print(f"MAE for improved ridge regression is {mean_absolute_error(y_test, y_pred)}")
+# determine MAE for ridge regression model with optimal alpha
+ridge_model = Ridge(optimalRidgeAlpha)
+mae = mae_cal(ridge_model)
+print(f"MAE for ridge regression with optimal alpha is {mae}")
 
-elastic_model = Pipeline([("imputer", imputer), ("model", ElasticNet())])
-elastic_model.fit(X_train, y_train)
-y_pred = elastic_model.predict(X_test)
-print(f"MAE for elasticnet model is {mean_absolute_error(y_test, y_pred)}")
+
+# L1&2 regularization with ElasticNet
+# determine MAE for ridge regression model with alpha = 0.1
+elastic = ElasticNet(alpha=0.1)
+mae = mae_cal(elastic)
+print(f"MAE estimate for ElasticNet alpha with 0.1: {mae}")
+
+# calculate MAE over several alphas
+alphas = [0.05, 0.1, 0.3, 1, 3, 5, 10, 10.6, 15, 15.2, 30, 50, 75]
+cv_elastic = [mae_cal(ElasticNet(alpha=alpha)).mean() for alpha in alphas]
+cv_elastic = pd.Series(cv_elastic, index=alphas)
+
+optimalelaAlpha = cv_elastic[cv_elastic == cv_elastic.min()].index.values[0]
+print("Optimal ElasticNet alpha: {}".format(optimalelaAlpha))
+
+# determine MAE for ElasticNet model with optimal alpha
+elastic_model = ElasticNet(optimalelaAlpha)
+mae = mae_cal(elastic_model)
+print(f"MAE for ElasticNet with optimal alpha is {mae}")
+
 # chosen_model = Pipeline([("imputer", imputer), ("model", linear_model)])
 # chosen_model.fit(X_train, y_train)
 # y_pred = chosen_model.predict(X_test)
