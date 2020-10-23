@@ -63,7 +63,8 @@ write about your observations in working on the assignment. What went well, what
 was easier to do than expected, and what did you spent most of your time on?
 You can write this report by continuing this file, or in another file you
 include in the repository.
----
+
+_________________
 
 ** Report
 1. I first take a general look at the data we have to get an initial idea about it.
@@ -113,7 +114,10 @@ include in the repository.
 
 7. The chosen model I get is Lasso model with alpha 75, which is my best model.
 
-`Problems I get in the assignment`
+
+_________________
+
+Problems I get in the assignment
 1. I am really confused about which columns to use first, cause I don't know how
    to use categorical and numeric features together. I talked this with Thijs.
    With his help, I searched online of the file, and finally deal with it.
