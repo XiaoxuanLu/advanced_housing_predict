@@ -112,7 +112,7 @@ include in the repository.
 
 7. The chosen model I get is Lasso model with alpha 75, which is my best model.
 
-*Problems I get in the assignment*
+_Problems I get in the assignment_
 1. I am really confused about which columns to use first, cause I don't know how
    to use categorical and numeric features together. I talked this with Thijs.
    With his help, I searched online of the file, and finally deal with it.
