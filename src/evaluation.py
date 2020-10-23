@@ -5,7 +5,7 @@ import pandas as pd
 
 data_dir = Path("data/")
 all_data = pd.read_csv(data_dir / "housing-data.csv", index_col="Order")
-test_data = pd.read_csv(data_dir / "housing-data.csv", index_col="Order")
+test_data = pd.read_csv(data_dir / "hold-out.csv", index_col="Order")
 
 
 def evaluate_model(

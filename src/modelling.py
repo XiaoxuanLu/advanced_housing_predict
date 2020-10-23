@@ -79,14 +79,17 @@ def mae_cal(model):
     y_pred = model.predict(X_test)
     mae = mean_absolute_error(y_test, y_pred)
     return mae
-def plot_learning_curves(model, X_train, X_test, y_train, y_test):
+def plot_learning_curves(model):
+    X_train, X_val, y_train, y_val = train_test_split(
+        all_data.drop(columns=target_column), all_data[target_column]
+    )
     train_errors, val_errors = [], []
     for m in range(1, 100):
         model.fit(X_train[:m], y_train[:m])
         y_train_predict = model.predict(X_train[:m])
-        y_val_predict = model.predict(X_test)
+        y_val_predict = model.predict(X_val)
         train_errors.append(mean_squared_error(y_train[:m], y_train_predict))
-        val_errors.append(mean_squared_error(y_test, y_val_predict))
+        val_errors.append(mean_squared_error(y_val, y_val_predict))
 
     plt.plot(np.sqrt(train_errors), "r-+", linewidth=2, label="train")
     plt.plot(np.sqrt(val_errors), "b-", linewidth=3, label="val")
@@ -122,7 +125,7 @@ mae = mae_cal(lasso_model)
 print(f"MAE for lasso regression with optimal alpha is {mae}")
 
 # plot learnign curve for best lasso model as ll.png
-# plot_learning_curves(lasso_model,X_train,X_test,y_train,y_test)
+# plot_learning_curves(lasso_model)
 # plt.savefig('ll.png')
 
 # L2 regularization with ridge
@@ -146,7 +149,7 @@ mae = mae_cal(ridge_model)
 print(f"MAE for ridge regression with optimal alpha is {mae}")
 
 # plot learning curve for best ridge model as rl.png
-# plot_learning_curves(ridge_model,X_train,X_test,y_train,y_test)
+# plot_learning_curves(ridge_model)
 # plt.savefig('rl.png')
 
 # L1&2 regularization with ElasticNet
@@ -169,7 +172,7 @@ mae = mae_cal(elastic_model)
 print(f"MAE for ElasticNet regression with optimal alpha is {mae}")
 
 # plot learning curve for best ElasticNet model as el.png
-# plot_learning_curves(elstic_model,X_train,X_test,y_train,y_test)
+# plot_learning_curves(elastic_model)
 # plt.savefig('el.png')
 
 chosen_model = lasso_model
