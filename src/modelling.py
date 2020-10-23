@@ -1,22 +1,18 @@
 from pathlib import Path
 import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.preprocessing import MinMaxScaler
 import numpy as np
-from scipy.stats import skew, norm
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.linear_model import LinearRegression
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 from sklearn.linear_model import Ridge
 from sklearn.linear_model import Lasso
-from sklearn.model_selection import cross_val_score, train_test_split, GridSearchCV, KFold
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.linear_model import ElasticNet
 from sklearn.compose import ColumnTransformer
-from sklearn.linear_model import LassoCV
+
 
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)

@@ -65,3 +65,57 @@ You can write this report by continuing this file, or in another file you
 include in the repository.
 
 ** Report
+1. I first take a general look at the data we have to get an initial idea about it.
+   I plot the distribution of Saleprice, and did not get a normal distribution, and
+   I found the dataset has both numerical and categorical features, therefore I need
+   to do feature engineering to use all the features to predict saleprice.
+
+2. I apply preprocessing and feature extraction pipelines to categorical and numerical
+   features, using ColumnTransformer. I scale the numerical features and one hot encode
+   the categorical ones. I split the data set with numeric and categorical feature list.
+   The numeric data is standard-scales after imputing missing values with 0, while the
+   categorical data is one hot encoded after imputing missing values wit ha new category
+   ('missing'). Then I create the preprocessing pipeline for both numeric and categorical
+   data. Finally, the preprocessing pipeline is integrated in a full prediction
+   pipeline, together with some regression models. I looked through the website
+   http://man.hubwiz.com/docset/Scikit.docset/Contents/Resources/Documents/auto_examples/compose/plot_column_transformer_mixed_types.html
+   to get the outline on how to preprocess data.
+
+3. I implement four models after processing data. Basic linear regression model,
+   Lasso for L1 regularisation, Ridge for L2 regularisation, and ElasticNet for
+   L1 and L2 regularisation.I create a helper function called mae_cal to
+   calculate MAE for each model. For each model except Liner regression, I first
+   use alpha=0.1, and get the MAE for the three models. Before hyper-parameter
+   tuning, ElasticNet model performs best.
+
+4. Hyper-parameter tuning. Initially, I find the best alpha manually. I create
+   a list of alphas, and find a list of MAE when using the alpha in the list.
+   I chose the alpha with the lowest MAE. I get 75 for Lasso, 30 for Ridge,
+   and 0.05 for ElsticNet. Then I use gridSearch to do that. Luckily, I almost
+   get the same optimal alpha in gridSearch, although the optimal alpha for ridge
+   does not be stable. With the hyper-parameter tuning, I get my best model
+   Lasso model with alpha=75. I get mae around 13435.35 running evaluation.py.
+
+5. Ridge regression adds a constraint that is a linear function of the squared
+   coefficients. Lasso penalizes the model by the absolute weight coefficients.
+   I get better result for Lasso and ElasticNet, it might be the reason that
+   the features in the dataset are correlated or I have a small fraction of nonzero
+   coefficients. But I think the reason of limited alphas to choose, I don't
+   include all alphas to do hyper-parameter tuning, cause it runs so slow. The
+   ElasticNet model should be the best theoretically, because ElasticNet
+   combines feature elimination from Lasso and feature coefficient reduction
+   from the Ridge model to improve predictions.
+
+6. I draw three learning curves for my three models with optimal alpha I found.
+   'rl.png' for ridge, 'll' for lasso, 'el' for ElasticNet. The function is copied
+   from class, and I only use model as parameter.
+
+7. The chosen model I get is Lasso model with alpha 75, which is my best model.
+
+* *Problems I get in the assignment
+1. I am really confused about which columns to use first, cause I don't know how
+   to use categorical and numeric features together. I talked this with Thijs.
+   With his help, I searched online of the file, and finally deal with it.
+
+2. The problem of how to use pipeline into gridsearch. I solved this after checking
+    error online, finding that I need to use "model__alpha" instead of "alpha".
