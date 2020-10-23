@@ -112,14 +112,23 @@ lasso.fit(X_train,y_train)
 mae = mae_cal(lasso)
 print(f"MAE estimate for lasso alpha with 0.1: {mae}")
 
+# initially manually do hyper-parameter tuning
 # calculate MAE over several alphas
-alphas = [0.0004,0.05, 0.1, 0.3, 1, 3, 5, 10,10.6, 15, 30, 50, 75]
-cv_lasso = [mae_cal(Pipeline([("preprocess", preprocessor), ("model", Lasso(alpha=alpha))])).mean() for alpha in alphas]
-cv_lasso = pd.Series(cv_lasso, index = alphas)
-optimalLassoAlpha = cv_lasso[cv_lasso == cv_lasso.min()].index.values[0]
-print("Optimal lasso alpha: {}".format(optimalLassoAlpha))
+# alphas = [0.0004,0.05, 0.1, 0.3, 1, 3, 5, 10,10.6, 15, 30, 50, 75]
+# cv_lasso = [mae_cal(Pipeline([("preprocess", preprocessor), ("model", Lasso(alpha=alpha))])).mean() for alpha in alphas]
+# cv_lasso = pd.Series(cv_lasso, index = alphas)
+# optimalLassoAlpha = cv_lasso[cv_lasso == cv_lasso.min()].index.values[0]
+# print("Optimal lasso alpha: {}".format(optimalLassoAlpha))
 
-lasso_model = Pipeline([("preprocess", preprocessor), ("model",Lasso(optimalLassoAlpha))])
+lasso_model = Pipeline([("preprocess", preprocessor), ("model",Lasso())])
+lasso_model.fit(X_train,y_train)
+parameters= {'model__alpha':[x for x in [0.0004,0.05, 0.1, 0.3, 1, 3, 5, 10,10.6, 15, 30, 50, 75]]}
+lasso_model=GridSearchCV(lasso_model, param_grid=parameters)
+lasso_model.fit(X_train,y_train)
+print("The best value of lasso Alpha is: ",lasso_model.best_params_)
+
+# The best value of lasso Alpha is:  {'model__alpha': 75}
+lasso_model = Pipeline([("preprocess", preprocessor), ("model",Lasso(lasso_model.best_params_.get('model__alpha')))])
 lasso_model.fit(X_train,y_train)
 mae = mae_cal(lasso_model)
 print(f"MAE for lasso regression with optimal alpha is {mae}")
@@ -127,6 +136,8 @@ print(f"MAE for lasso regression with optimal alpha is {mae}")
 # plot learnign curve for best lasso model as ll.png
 # plot_learning_curves(lasso_model)
 # plt.savefig('ll.png')
+
+
 
 # L2 regularization with ridge
 
@@ -137,13 +148,21 @@ mae = mae_cal(ridge)
 print(f"MAE estimate for ridge alpha with 0.1: {mae}")
 
 # calculate MAE over several alphas
-alphas = [0.0004,0.05, 0.1, 0.3, 1, 3, 5, 10,10.6, 15, 30, 50, 75]
-cv_ridge = [mae_cal(Pipeline([("preprocess", preprocessor), ("model", Ridge(alpha=alpha))])).mean() for alpha in alphas]
-cv_ridge = pd.Series(cv_ridge, index = alphas)
-optimalRidgeAlpha = cv_ridge[cv_ridge == cv_ridge.min()].index.values[0]
-print("Optimal ridge alpha: {}".format(optimalRidgeAlpha))
+# alphas = [0.0004,0.05, 0.1, 0.3, 1, 3, 5, 10,10.6, 15, 30, 50, 75]
+# cv_ridge = [mae_cal(Pipeline([("preprocess", preprocessor), ("model", Ridge(alpha=alpha))])).mean() for alpha in alphas]
+# cv_ridge = pd.Series(cv_ridge, index = alphas)
+# optimalRidgeAlpha = cv_ridge[cv_ridge == cv_ridge.min()].index.values[0]
+# print("Optimal ridge alpha: {}".format(optimalRidgeAlpha))
 
-ridge_model = Pipeline([("preprocess", preprocessor), ("model",Ridge(optimalRidgeAlpha))])
+ridge_model = Pipeline([("preprocess", preprocessor), ("model",Ridge())])
+ridge_model.fit(X_train,y_train)
+parameters= {'model__alpha':[x for x in [0.0004,0.05, 0.1, 0.3, 1, 3, 5, 10, 10.6, 15, 30, 50, 75]]}
+ridge_model=GridSearchCV(ridge_model, param_grid=parameters)
+ridge_model.fit(X_train,y_train)
+print("The best value of ridge Alpha is: ",ridge_model.best_params_)
+
+# The best value of ridge Alpha is:  {'model__alpha': 30}
+ridge_model = Pipeline([("preprocess", preprocessor), ("model",Ridge(ridge_model.best_params_.get('model__alpha')))])
 ridge_model.fit(X_train,y_train)
 mae = mae_cal(ridge_model)
 print(f"MAE for ridge regression with optimal alpha is {mae}")
@@ -160,13 +179,20 @@ mae = mae_cal(elastic)
 print(f"MAE estimate for ElasticNet alpha with 0.1: {mae}")
 
 # calculate MAE over several alphas
-alphas = [0.0004,0.05, 0.1, 0.3, 1, 3, 5, 10,10.6, 15, 30, 50, 75]
-cv_elastic = [mae_cal(Pipeline([("preprocess", preprocessor), ("model", ElasticNet(alpha=alpha))])).mean() for alpha in alphas]
-cv_elastic= pd.Series(cv_elastic, index = alphas)
-optimalElasticAlpha = cv_elastic[cv_elastic == cv_elastic.min()].index.values[0]
-print("Optimal ElasticNet alpha: {}".format(optimalElasticAlpha))
+# alphas = [0.0004,0.05, 0.1, 0.3, 1, 3, 5, 10,10.6, 15, 30, 50, 75]
+# cv_elastic = [mae_cal(Pipeline([("preprocess", preprocessor), ("model", ElasticNet(alpha=alpha))])).mean() for alpha in alphas]
+# cv_elastic= pd.Series(cv_elastic, index = alphas)
+# optimalElasticAlpha = cv_elastic[cv_elastic == cv_elastic.min()].index.values[0]
+# print("Optimal ElasticNet alpha: {}".format(optimalElasticAlpha))
 
-elastic_model = Pipeline([("preprocess", preprocessor), ("model",ElasticNet(optimalElasticAlpha))])
+elastic_model = Pipeline([("preprocess", preprocessor), ("model",ElasticNet())])
+elastic_model.fit(X_train,y_train)
+parameters= {'model__alpha':[x for x in [0.0004,0.05, 0.1, 0.3, 1, 3, 5, 10,10.6, 15, 30, 50, 75]]}
+elastic_model=GridSearchCV(elastic_model, param_grid=parameters)
+elastic_model.fit(X_train,y_train)
+print("The best value of elastic Alpha is: ",elastic_model.best_params_)
+
+elastic_model = Pipeline([("preprocess", preprocessor), ("model",ElasticNet(elastic_model.best_params_.get('model__alpha')))])
 elastic_model.fit(X_train,y_train)
 mae = mae_cal(elastic_model)
 print(f"MAE for ElasticNet regression with optimal alpha is {mae}")
